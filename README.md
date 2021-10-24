@@ -4,7 +4,7 @@ abego Event - Event Handling for Java
 
 ## Download
 
-__Download:__ https://github.com/abego/commons/releases/tag/v0.1.0
+__Download:__ https://github.com/abego/event/releases/tag/v0.1.0
 
 __Maven:__
 
