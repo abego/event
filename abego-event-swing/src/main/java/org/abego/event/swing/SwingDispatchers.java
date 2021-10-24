@@ -5,7 +5,7 @@ import org.abego.event.EventService;
 
 public final class SwingDispatchers {
     SwingDispatchers() {
-        throw new IllegalArgumentException("Must not instantiate");
+        throw new UnsupportedOperationException();
     }
 
     public static EventDispatcher getDefault() {

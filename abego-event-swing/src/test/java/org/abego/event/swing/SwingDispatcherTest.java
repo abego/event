@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static javax.swing.SwingUtilities.isEventDispatchThread;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SwingDispatcherTest {
 
@@ -20,6 +21,12 @@ class SwingDispatcherTest {
 //        Assertions.assertTrue(EventTestUtil.exceptionInObserverCodeDoesNotStopDispatching(
 //                SwingDispatchers::newSwingDispatcher));
 //    }
+
+    @Test
+    void constructor() {
+        assertThrows(
+                UnsupportedOperationException.class, SwingDispatchers::new);
+    }
 
     @Test
     void defaultObject() {
