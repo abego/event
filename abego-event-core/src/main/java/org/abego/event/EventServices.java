@@ -2,7 +2,7 @@ package org.abego.event;
 
 public final class EventServices {
     EventServices() {
-        throw new IllegalArgumentException("Must not instantiate");
+        throw new UnsupportedOperationException();
     }
 
     public static EventService getDefault() {
