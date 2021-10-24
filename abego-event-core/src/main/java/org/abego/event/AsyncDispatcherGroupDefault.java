@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-//TODO: reduce Logging when problems with close/interrupt are resolved
 class AsyncDispatcherGroupDefault implements AsyncDispatcherGroup, AutoCloseable {
     private static final Logger LOGGER = Logger.getLogger(AsyncDispatcherGroupDefault.class.getName());
     private final EventService eventService;
@@ -15,6 +14,7 @@ class AsyncDispatcherGroupDefault implements AsyncDispatcherGroup, AutoCloseable
     private final Thread thread;
     private final AtomicBoolean closed = new AtomicBoolean();
     private final AtomicBoolean endRunLoop = new AtomicBoolean();
+    private final AtomicBoolean wasInterrupted = new AtomicBoolean();
 
     private class AsyncEventDispatcherDefault implements EventDispatcher {
         private final ExplicitDispatcher explicitDispatcher =
@@ -22,21 +22,18 @@ class AsyncDispatcherGroupDefault implements AsyncDispatcherGroup, AutoCloseable
 
         @Override
         public void process(Object event, Iterable<Consumer<Object>> listeners) {
-            if (!closed.get()) {
-                explicitDispatcher.process(event, listeners);
-            } else {
-                LOGGER.log(Level.WARNING,
-                        "Ignoring event {0}. AsyncDispatcherGroup already closed.", event);
+            synchronized (closed) {
+                if (!closed.get()) {
+                    explicitDispatcher.process(event, listeners);
+                } else {
+                    LOGGER.log(Level.WARNING,
+                            "Ignoring event {0}. AsyncDispatcherGroup already closed.", event);
+                }
             }
         }
 
         private void onDispatchPending(ExplicitDispatcher dispatcher) {
-            LOGGER.log(Level.INFO, "dispatch is pending");
-            LOGGER.log(Level.INFO,
-                    "    will add dispatch to run by {0}. ", this);
             codeToRun.add(dispatcher::dispatch);
-            LOGGER.log(Level.INFO,
-                    "    did add dispatch to run by {0}. ", this);
         }
     }
 
@@ -60,32 +57,25 @@ class AsyncDispatcherGroupDefault implements AsyncDispatcherGroup, AutoCloseable
     private void runLoop() {
         while (!endRunLoop.get()) {
             try {
-                LOGGER.log(Level.INFO,
-                        "Wait for code to run by dispatcher {0}.", this);
                 Runnable runnable = codeToRun.take();
-                LOGGER.log(Level.INFO,
-                        "Got code to run by dispatcher {0}", this);
-                LOGGER.log(Level.INFO, "    Will run.");
                 runnable.run();
-                LOGGER.log(Level.INFO, "    Did run.");
 
             } catch (InterruptedException e) {
                 // Disabled SonarLint rule
                 //     java:S2142 (“InterruptedException” should not be ignored)
                 // because:
                 //
-                // Don't interrupt thread, to ensure the thread lives
+                // Don't interrupt thread now, to ensure the thread lives
                 // long enough the pending code can run. The thread will die
                 // once all pending items in the codeToRun queue and the
-                // shutdown item (see #close) are executed.
-                LOGGER.log(Level.INFO,
-                        "Received InterruptedException. Will close dispatcher {0}.", this);
-                LOGGER.log(Level.INFO, "   Will close dispatcher.");
+                // shutdown item (see #close) are executed. Then there will be
+                // a re-interrupt (see end of this method).
+                wasInterrupted.set(true);
                 close();
-                LOGGER.log(Level.INFO, "   InterruptedException handling done.");
-                Thread.currentThread().interrupt();
-                return;
             }
+        }
+        if (wasInterrupted.get()) {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -98,17 +88,11 @@ class AsyncDispatcherGroupDefault implements AsyncDispatcherGroup, AutoCloseable
      */
     @Override
     public void close() {
-        LOGGER.log(Level.INFO, "Entering AsyncDispatcherGroup.close ({0})", this);
-        closed.set(true);
+        synchronized (closed) {
+            closed.set(true);
 
-        LOGGER.log(Level.INFO, "AsyncDispatcherGroup: queued Shutdown request ({0})", this);
-        codeToRun.add(() -> {
-            LOGGER.log(Level.INFO, "will set endRunLoop to true of AsyncDispatcherGroup ({0})", this);
-            endRunLoop.set(true);
-            LOGGER.log(Level.INFO, "did set endRunLoop to true of AsyncDispatcherGroup ({0})", this);
-        });
-        LOGGER.log(Level.INFO, "AsyncDispatcherGroup: queued Shutdown request ({0})", this);
-
+            codeToRun.add(() -> endRunLoop.set(true));
+        }
     }
 
     public boolean isClosed() {
