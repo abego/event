@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-class AsyncDispatcherGroupDefault implements AsyncDispatcherGroup, AutoCloseable {
+final class AsyncDispatcherGroupDefault implements AsyncDispatcherGroup, AutoCloseable {
     private static final Logger LOGGER = Logger.getLogger(AsyncDispatcherGroupDefault.class.getName());
     private final EventService eventService;
     private final BlockingQueue<Runnable> codeToRun = new LinkedBlockingQueue<>();

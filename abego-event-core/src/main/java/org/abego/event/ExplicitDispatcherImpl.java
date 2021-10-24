@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 import static org.abego.event.EventUtil.getDispatchErrorMessageSupplier;
 
-class ExplicitDispatcherImpl implements ExplicitDispatcher {
+final class ExplicitDispatcherImpl implements ExplicitDispatcher {
     private static final Logger LOGGER = Logger.getLogger(ExplicitDispatcherImpl.class.getName());
     private final AtomicBoolean dispatchPending = new AtomicBoolean();
     private final Queue<Item> queue = new ConcurrentLinkedQueue<>();

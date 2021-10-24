@@ -8,7 +8,7 @@ import org.abego.event.ExplicitDispatcher;
 import javax.swing.SwingUtilities;
 import java.util.function.Consumer;
 
-class SwingDispatcher implements EventDispatcher {
+final class SwingDispatcher implements EventDispatcher {
     private static final SwingDispatcher DEFAULT =
             new SwingDispatcher(EventServices.getDefault());
     private final ExplicitDispatcher dispatcher;

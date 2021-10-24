@@ -21,7 +21,7 @@ import static org.abego.event.ExplicitDispatcherImpl.newExplicitDispatcherImpl;
 //  - "dependency graph" (posts <-> observers)
 
 
-class EventServiceDefault implements EventService {
+final class EventServiceDefault implements EventService {
     private static final EventService DEFAULT_INSTANCE = newInstance();
     private final SimpleSet<EventObserver<?>> allEventObservers = SimpleSet.newSimpleSet();
     private final AsyncDispatcherGroup asyncDispatcherGroup = newAsyncEventDispatcherGroupDefault(this);

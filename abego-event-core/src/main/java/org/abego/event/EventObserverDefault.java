@@ -5,7 +5,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-class EventObserverDefault<T> implements EventObserver<T> {
+final class EventObserverDefault<T> implements EventObserver<T> {
     private final Configuration<T> configuration;
 
     private EventObserverDefault(Configuration<T> configuration) {

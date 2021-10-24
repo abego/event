@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 
 import static org.abego.event.EventUtil.getDispatchErrorMessageSupplier;
 
-class DirectDispatcher implements EventDispatcher {
+final class DirectDispatcher implements EventDispatcher {
     private static final Logger LOGGER = Logger.getLogger(DirectDispatcher.class.getName());
 
     private static final DirectDispatcher DEFAULT = new DirectDispatcher();

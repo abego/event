@@ -2,7 +2,7 @@ package org.abego.event;
 
 import org.eclipse.jdt.annotation.Nullable;
 
-class PropertyChangedDefault implements PropertyChanged {
+final class PropertyChangedDefault implements PropertyChanged {
     private final String propertyName;
     private final Object source;
     @Nullable
