@@ -95,10 +95,11 @@
         <!-- version infos -->
         <abego-event-core.version>${project.version}</abego-event-core.version>
         <abego-event-swing.version>${project.version}</abego-event-swing.version>
-        <abego-commons-base.version>0.11.0</abego-commons-base.version>
+        <abego-commons-base.version>0.12.0-SNAPSHOT</abego-commons-base.version>
         <abego-commons-test.version>0.11.0</abego-commons-test.version>
+        <abego-guitesting-swing.version>0.15.0-SNAPSHOT</abego-guitesting-swing.version>
         <jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
-        <junit-jupiter.version>5.8.1</junit-jupiter.version>
+        <junit-jupiter.version>5.5.2</junit-jupiter.version>
         <junit-platform-surefire-provider.version>1.1.0</junit-platform-surefire-provider.version>
         <lombok.version>1.18.8</lombok.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>

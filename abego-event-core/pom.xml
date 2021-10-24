@@ -49,5 +49,11 @@
             <version>${abego-commons-test.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.abego.guitesting</groupId>
+            <artifactId>abego-guitesting-swing</artifactId>
+            <version>${abego-guitesting-swing.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

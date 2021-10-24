@@ -54,6 +54,12 @@
             <artifactId>abego-event-core</artifactId>
             <version>${abego-event-core.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.abego.guitesting</groupId>
+            <artifactId>abego-guitesting-swing</artifactId>
+            <version>${abego-guitesting-swing.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
