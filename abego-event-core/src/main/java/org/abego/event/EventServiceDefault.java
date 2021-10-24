@@ -1,6 +1,5 @@
 package org.abego.event;
 
-import org.abego.commons.util.SimpleSet;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.ArrayList;
@@ -129,8 +128,7 @@ class EventServiceDefault implements EventService {
     }
 
     private Iterable<EventObserver<?>> getObserversForEvent(Object event) {
-        return allEventObservers.asSeq()
-                .filter(o -> isEventForObserver(event, o));
+        return allEventObservers.filtered(o -> isEventForObserver(event, o));
     }
 
     private boolean isEventForObserver(Object event, EventObserver<?> observer) {

@@ -5,8 +5,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static org.abego.commons.util.function.PredicateUtil.alwaysTrue;
-
 public interface EventObserver<T> {
     interface Configuration<T> {
 
@@ -17,7 +15,7 @@ public interface EventObserver<T> {
         EventDispatcher getDispatcher();
 
         default Predicate<T> getCondition() {
-            return alwaysTrue();
+            return o -> true;
         }
 
         default @Nullable Object getSource() {
