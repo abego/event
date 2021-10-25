@@ -13,27 +13,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EventObserverTest {
     @Test
-    void configuration() {
+    void smoketest() {
         Var<String> out = VarUtil.newVar();
 
-        EventObserver.Configuration<String> config = new EventObserver.Configuration<String>() {
-            @Override
-            public Class<String> getEventType() {
-                return String.class;
-            }
-
-            @Override
-            public Consumer<String> getListener() {
-                return out::set;
-            }
-
-            @Override
-            public EventDispatcher getDispatcher() {
-                return (event, listeners) -> {
+        EventObserver<String> config = EventObserverDefault.newEventObserverDefault(
+                String.class,out::set, o->true,null,(event, listeners) -> {
                     // do nothing
-                };
-            }
-        };
+                });
 
         assertEquals(String.class, config.getEventType());
         config.getListener().accept("foo");

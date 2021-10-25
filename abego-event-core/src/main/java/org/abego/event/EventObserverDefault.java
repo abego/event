@@ -6,38 +6,59 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 final class EventObserverDefault<T> implements EventObserver<T> {
-    private final Configuration<T> configuration;
+    private final Class<T> eventType;
+    private final Consumer<T> listener;
+    private final Predicate<T> condition;
+    private final @Nullable Object source;
+    private final EventDispatcher dispatcher;
 
-    private EventObserverDefault(Configuration<T> configuration) {
-        this.configuration = configuration;
+    private EventObserverDefault(
+            Class<T> eventType,
+            Consumer<T> listener,
+            Predicate<T> condition,
+            @Nullable Object source,
+            EventDispatcher dispatcher) {
+
+        this.eventType = eventType;
+        this.listener = listener;
+        this.condition = condition;
+        this.source = source;
+        this.dispatcher = dispatcher;
     }
 
-    public static <T> EventObserverDefault<T> newEventObserverDefault(Configuration<T> configuration) {
-        return new EventObserverDefault<>(configuration);
+
+    public static <T> EventObserverDefault<T> newEventObserverDefault(
+            Class<T> eventType,
+            Consumer<T> listener,
+            Predicate<T> condition,
+            @Nullable Object source,
+            EventDispatcher dispatcher) {
+
+        return new EventObserverDefault<>(eventType, listener, condition, source, dispatcher);
     }
 
     @Override
     public Class<T> getEventType() {
-        return configuration.getEventType();
+        return eventType;
     }
 
     @Override
     public Consumer<T> getListener() {
-        return configuration.getListener();
+        return listener;
     }
 
     @Override
     public Predicate<T> getCondition() {
-        return configuration.getCondition();
+        return condition;
     }
 
     @Override
     public @Nullable Object getSource() {
-        return configuration.getSource();
+        return source;
     }
 
     @Override
     public EventDispatcher getDispatcher() {
-        return configuration.getDispatcher();
+        return dispatcher;
     }
 }

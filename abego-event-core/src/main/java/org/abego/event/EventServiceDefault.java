@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static org.abego.event.AsyncDispatcherGroupDefault.newAsyncEventDispatcherGroupDefault;
 import static org.abego.event.EventObserverDefault.newEventObserverDefault;
@@ -66,12 +67,23 @@ final class EventServiceDefault implements EventService {
     }
 
     @Override
-    public <T> EventObserver<T> addObserver(EventObserver.Configuration<T> eventObserverConfiguration) {
+    public <T> EventObserver<T> addObserver(EventObserver<T> eventObserver) {
         checkNotClosed();
 
-        EventObserverDefault<T> observer = newEventObserverDefault(eventObserverConfiguration);
-        allEventObservers.add(observer);
-        return observer;
+        if (!allEventObservers.add(eventObserver)) {
+            throw new IllegalArgumentException(
+                    "EventObserver was already added before.");
+        }
+        return eventObserver;
+    }
+
+    public <T> EventObserver<T> addObserver(
+            Class<T> eventType,
+            @Nullable Object source,
+            Predicate<T> condition,
+            EventDispatcher dispatcher,
+            Consumer<T> listener) {
+        return addObserver(newEventObserverDefault(eventType,listener,condition,source,dispatcher));
     }
 
     @Override

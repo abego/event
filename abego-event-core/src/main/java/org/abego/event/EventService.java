@@ -32,7 +32,7 @@ public interface EventService extends AutoCloseable {
 
     /**
      * Post a {@link PropertyChanged} event to the {@link EventService}.
-     *
+     * <p>
      * As {@link #postPropertyChanged(Object, String, Object)}, but with no
      * details.
      *
@@ -46,17 +46,37 @@ public interface EventService extends AutoCloseable {
 
 
     /**
-     * Creates an {@link EventObserver} based on the given
-     * EventObserver.Configuration, adds it the {@link EventService}
+     * Adds the  {@code eventObserver} to the {@link EventService}
      * and returns it.
+     * <p>
+     * The operation will fail when the {@link EventService} already contains
+     * the {@code eventObserver}.
      *
-     * @param eventObserverConfiguration the parameters used to create the
-     *                                   {@link EventObserver}
-     * @param <T>                        The type of events to observe
-     * @return The newly create {@link EventObserver}
+     * @param eventObserver The {@link EventObserver} to add
+     * @param <T>           The type of events to observe
+     * @return The {@link EventObserver} ({@code eventObserver}
+     */
+    <T> EventObserver<T> addObserver(EventObserver<T> eventObserver);
+
+    /**
+     * Creates a new {@link EventObserver} based on the given parameters,
+     * adds it to the {@link EventService} and returns the new EventObserver.
+     *
+     * @param eventType  The type of events to observe
+     * @param source     When not {@code null} only events with this source are
+     *                   observed.
+     * @param condition  Only events matching the condition are observed.
+     * @param dispatcher The {@link EventDispatcher} serving the EventObserver
+     * @param listener   The code to run when the observer receives an event
+     * @param <T>        The type of events to observe
+     * @return the newly created {@link EventObserver}
      */
     <T> EventObserver<T> addObserver(
-            EventObserver.Configuration<T> eventObserverConfiguration);
+            Class<T> eventType,
+            @Nullable Object source,
+            Predicate<T> condition,
+            EventDispatcher dispatcher,
+            Consumer<T> listener);
 
     default <T> EventObserver<T> addObserver(
             Class<T> eventType,
@@ -113,40 +133,6 @@ public interface EventService extends AutoCloseable {
             EventDispatcher dispatcher,
             Consumer<T> listener) {
         return addObserver(eventType, source, o -> true, dispatcher, listener);
-    }
-
-    default <T> EventObserver<T> addObserver(
-            Class<T> eventType,
-            @Nullable Object source,
-            Predicate<T> condition,
-            EventDispatcher dispatcher,
-            Consumer<T> listener) {
-        return addObserver(new EventObserver.Configuration<T>() {
-            @Override
-            public Class<T> getEventType() {
-                return eventType;
-            }
-
-            @Override
-            public Predicate<T> getCondition() {
-                return condition;
-            }
-
-            @Override
-            public @Nullable Object getSource() {
-                return source;
-            }
-
-            @Override
-            public EventDispatcher getDispatcher() {
-                return dispatcher;
-            }
-
-            @Override
-            public Consumer<T> getListener() {
-                return listener;
-            }
-        });
     }
 
     default EventObserver<PropertyChanged> addPropertyObserver(
