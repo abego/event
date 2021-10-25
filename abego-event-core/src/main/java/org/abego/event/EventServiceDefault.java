@@ -83,7 +83,7 @@ final class EventServiceDefault implements EventService {
             Predicate<T> condition,
             EventDispatcher dispatcher,
             Consumer<T> listener) {
-        return addObserver(newEventObserverDefault(eventType,listener,condition,source,dispatcher));
+        return addObserver(newEventObserverDefault(eventType, source, condition, dispatcher, listener));
     }
 
     @Override

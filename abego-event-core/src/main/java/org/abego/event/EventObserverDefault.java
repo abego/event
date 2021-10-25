@@ -7,17 +7,17 @@ import java.util.function.Predicate;
 
 final class EventObserverDefault<T> implements EventObserver<T> {
     private final Class<T> eventType;
-    private final Consumer<T> listener;
-    private final Predicate<T> condition;
     private final @Nullable Object source;
+    private final Predicate<T> condition;
     private final EventDispatcher dispatcher;
+    private final Consumer<T> listener;
 
     private EventObserverDefault(
             Class<T> eventType,
-            Consumer<T> listener,
-            Predicate<T> condition,
             @Nullable Object source,
-            EventDispatcher dispatcher) {
+            Predicate<T> condition,
+            EventDispatcher dispatcher,
+            Consumer<T> listener) {
 
         this.eventType = eventType;
         this.listener = listener;
@@ -26,15 +26,14 @@ final class EventObserverDefault<T> implements EventObserver<T> {
         this.dispatcher = dispatcher;
     }
 
-
     public static <T> EventObserverDefault<T> newEventObserverDefault(
             Class<T> eventType,
-            Consumer<T> listener,
-            Predicate<T> condition,
             @Nullable Object source,
-            EventDispatcher dispatcher) {
+            Predicate<T> condition,
+            EventDispatcher dispatcher,
+            Consumer<T> listener) {
 
-        return new EventObserverDefault<>(eventType, listener, condition, source, dispatcher);
+        return new EventObserverDefault<>(eventType, source, condition, dispatcher, listener);
     }
 
     @Override

@@ -4,8 +4,6 @@ import org.abego.commons.var.Var;
 import org.abego.commons.var.VarUtil;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.Consumer;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -17,9 +15,9 @@ class EventObserverTest {
         Var<String> out = VarUtil.newVar();
 
         EventObserver<String> config = EventObserverDefault.newEventObserverDefault(
-                String.class,out::set, o->true,null,(event, listeners) -> {
+                String.class, null, o->true, (event, listeners) -> {
                     // do nothing
-                });
+                }, out::set);
 
         assertEquals(String.class, config.getEventType());
         config.getListener().accept("foo");

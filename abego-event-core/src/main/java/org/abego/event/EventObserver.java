@@ -9,15 +9,15 @@ public interface EventObserver<T> {
 
     Class<T> getEventType();
 
-    Consumer<T> getListener();
+    default @Nullable Object getSource() {
+        return null;
+    }
 
     default Predicate<T> getCondition() {
         return o -> true;
     }
 
-    default @Nullable Object getSource() {
-        return null;
-    }
-
     EventDispatcher getDispatcher();
+
+    Consumer<T> getListener();
 }
