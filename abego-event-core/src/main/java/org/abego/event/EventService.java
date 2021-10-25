@@ -166,7 +166,7 @@ public interface EventService extends AutoCloseable {
             // use defaultDispatcher,
             Consumer<PropertyChanged> listener) {
         return addPropertyObserver(
-                source, null, condition, getDirectDispatcher(), listener);
+                source, null, condition, getDefaultDispatcher(), listener);
     }
 
     default EventObserver<PropertyChanged> addPropertyObserver(
