@@ -2,10 +2,13 @@ package org.abego.event;
 
 import org.eclipse.jdt.annotation.Nullable;
 
+import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public interface EventService extends AutoCloseable {
+
+    //region Posting Events
 
     /**
      * Post the given event object to the {@link EventService}.
@@ -44,9 +47,12 @@ public interface EventService extends AutoCloseable {
                 propertyName, source, null));
     }
 
+    //endregion
+    //region Observing Events
+    //region addObserver
 
     /**
-     * Adds the  {@code eventObserver} to the {@link EventService}
+     * Adds the {@code eventObserver} to the {@link EventService}
      * and returns it.
      * <p>
      * The operation will fail when the {@link EventService} already contains
@@ -135,6 +141,8 @@ public interface EventService extends AutoCloseable {
         return addObserver(eventType, source, o -> true, dispatcher, listener);
     }
 
+    //endregion
+    //region addPropertyObserver
     default EventObserver<PropertyChanged> addPropertyObserver(
             Object source,
             @Nullable String propertyName,
@@ -199,14 +207,60 @@ public interface EventService extends AutoCloseable {
                 source, null, o -> true, getDefaultDispatcher(), listener);
     }
 
+    //endregion
+    //region removeObserver, removeAllObservers
+
+    /**
+     * Removes the {@code observer} from this {@link EventService} or, do
+     * nothing when the {@code observer} was not added to this service.
+     */
     void removeObserver(EventObserver<?> observer);
 
+    /**
+     * Removes the {@link EventObserver}s contained in observers.
+     * <p>
+     * See also {@link #unobserveAllSources(Collection)}.
+     */
+    void removeAllObservers(Collection<EventObserver<?>> observers);
+
+    /**
+     * Removes all {@link EventObserver}s currently added to this
+     * {@link EventService}.
+     * <p>
+     * See also {@link #unobserveAllSources(Collection)}.
+     */
+    void removeAllObservers();
+
+    //endregion
+    //region unobserveSource, unobserveAllSources
+
+    /**
+     * Unobserves the {@code sourceObject}, i.e. removes all currently observing
+     * {@link EventObserver}s with {@code sourceObject} as their source object.
+     */
+    void unobserveSource(Object sourceObject);
+
+    /**
+     * Unobserves all {@code sourceObjects}, i.e. removes all currently
+     * observing {@link EventObserver}s that have an of the objects in
+     * {@code sourceObjects} as their source object.
+     * <p>
+     * See also {@link #removeAllObservers()}.
+     */
+    void unobserveAllSources(Collection<Object> sourceObjects);
+
+    //endregion
+    //endregion
+    //region Dispatching Events
     default EventDispatcher getDefaultDispatcher() {
         return getDirectDispatcher();
     }
 
+    //region Direct Dispatching
     EventDispatcher getDirectDispatcher();
 
+    //endregion
+    //region Explicit Dispatching
     ExplicitDispatcher newExplicitDispatcher(
             Consumer<ExplicitDispatcher> onDispatchPending);
 
@@ -214,11 +268,17 @@ public interface EventService extends AutoCloseable {
         return newExplicitDispatcher(e -> {});
     }
 
+    //endregion
+    //region Async Dispatching
     EventDispatcher getAsyncDispatcher();
 
     AsyncDispatcherGroup newAsyncEventDispatcherGroup();
 
+    //endregion
+    //endregion
+    //region Closing EventService
     void close();
 
     boolean isClosed();
+    //endregion
 }

@@ -3,9 +3,11 @@ package org.abego.event;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -23,13 +25,8 @@ import static org.abego.event.ExplicitDispatcherImpl.newExplicitDispatcherImpl;
 
 
 final class EventServiceDefault implements EventService {
+    //region Construction
     private static final EventService DEFAULT_INSTANCE = newInstance();
-    private final SimpleSet<EventObserver<?>> allEventObservers = SimpleSet.newSimpleSet();
-    private final AsyncDispatcherGroup asyncDispatcherGroup = newAsyncEventDispatcherGroupDefault(this);
-    private final EventDispatcher asyncDispatcher = asyncDispatcherGroup.newAsyncDispatcher();
-
-    private boolean closed = false;
-
     private EventServiceDefault() {
     }
 
@@ -41,6 +38,8 @@ final class EventServiceDefault implements EventService {
         return new EventServiceDefault();
     }
 
+    //endregion
+    //region Posting Events
     @Override
     public void postEvent(Object event) {
         checkNotClosed();
@@ -65,6 +64,10 @@ final class EventServiceDefault implements EventService {
             }
         }
     }
+
+    //endregion
+    //region Observing Events
+    private final SimpleSet<EventObserver<?>> allEventObservers = SimpleSet.newSimpleSet();
 
     @Override
     public <T> EventObserver<T> addObserver(EventObserver<T> eventObserver) {
@@ -94,6 +97,63 @@ final class EventServiceDefault implements EventService {
     }
 
     @Override
+    public void removeAllObservers(Collection<EventObserver<?>> observers) {
+        checkNotClosed();
+
+        allEventObservers.removeAll(observers);
+    }
+
+    @Override
+    public void removeAllObservers() {
+        checkNotClosed();
+
+        allEventObservers.removeAll();
+    }
+
+    @Override
+    public void unobserveSource(Object sourceObject) {
+        checkNotClosed();
+
+        allEventObservers.removeIf(e-> Objects.equals(e.getSource(), sourceObject));
+    }
+
+    @Override
+    public void unobserveAllSources(Collection<Object> sourceObjects) {
+        checkNotClosed();
+
+        allEventObservers.removeIf(e-> sourceObjects.contains(e.getSource()));
+    }
+
+    private Iterable<EventObserver<?>> getObserversForEvent(Object event) {
+        checkNotClosed();
+
+        return allEventObservers.filtered(o -> isEventForObserver(event, o));
+    }
+
+    private boolean isEventForObserver(Object event, EventObserver<?> observer) {
+        // check event type
+        if (!observer.getEventType().isAssignableFrom(event.getClass()))
+            return false;
+
+        // check source (of required)
+        @Nullable Object requiredSource = observer.getSource();
+        if (requiredSource != null
+                && (!(event instanceof EventWithSource)
+                || !requiredSource.equals(((EventWithSource) event).getSource()))) {
+            return false;
+        }
+
+        // check condition
+        //noinspection unchecked
+        return ((EventObserver<Object>) observer).getCondition().test(event);
+    }
+
+    //endregion
+    //region Dispatching Events
+    private final AsyncDispatcherGroup asyncDispatcherGroup = newAsyncEventDispatcherGroupDefault(this);
+    private final EventDispatcher asyncDispatcher = asyncDispatcherGroup.newAsyncDispatcher();
+
+    @Override
     public EventDispatcher getDirectDispatcher() {
         checkNotClosed();
 
@@ -121,6 +181,9 @@ final class EventServiceDefault implements EventService {
         return newAsyncEventDispatcherGroupDefault(this);
     }
 
+    //endregion
+    //region Closing EventService
+    private boolean closed = false;
     @Override
     public boolean isClosed() {
         return closed;
@@ -129,6 +192,7 @@ final class EventServiceDefault implements EventService {
     @Override
     public void close() {
         closed = true;
+        allEventObservers.removeAll();
         asyncDispatcherGroup.close();
     }
 
@@ -139,26 +203,5 @@ final class EventServiceDefault implements EventService {
         }
     }
 
-    private Iterable<EventObserver<?>> getObserversForEvent(Object event) {
-        return allEventObservers.filtered(o -> isEventForObserver(event, o));
-    }
-
-    private boolean isEventForObserver(Object event, EventObserver<?> observer) {
-        // check event type
-        if (!observer.getEventType().isAssignableFrom(event.getClass()))
-            return false;
-
-        // check source (of required)
-        @Nullable Object requiredSource = observer.getSource();
-        if (requiredSource != null
-                && (!(event instanceof EventWithSource)
-                || !requiredSource.equals(((EventWithSource) event).getSource()))) {
-            return false;
-        }
-
-        // check condition
-        //noinspection unchecked
-        return ((EventObserver<Object>) observer).getCondition().test(event);
-    }
-
+    //endregion
 }

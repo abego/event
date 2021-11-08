@@ -1,7 +1,5 @@
 package org.abego.event;
 
-import org.abego.guitesting.swing.GT;
-import org.abego.guitesting.swing.GuiTesting;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;

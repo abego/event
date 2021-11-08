@@ -25,6 +25,7 @@
 package org.abego.event;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +49,10 @@ final class SimpleSet<S> {
         return set.remove(item);
     }
 
+    public void removeIf(Predicate<S> condition) {
+        set.removeIf(condition);
+    }
+
     public List<S> filtered(Predicate<S> condition) {
         List<S> result = new ArrayList<>();
         for (S item : set) {
@@ -56,5 +61,13 @@ final class SimpleSet<S> {
             }
         }
         return result;
+    }
+
+    public void removeAll() {
+        set.clear();
+    }
+
+    public void removeAll(Collection<S> items) {
+        set.removeAll(items);
     }
 }

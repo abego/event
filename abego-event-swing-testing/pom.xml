@@ -33,20 +33,35 @@
         <version>0.1.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>abego-event-swing</artifactId>
+    <artifactId>abego-event-swing-testing</artifactId>
 
-    <name>abego Event for Swing</name>
+    <name>abego Event for Swing (Testing)</name>
 
     <dependencies>
         <dependency>
-            <groupId>org.abego.commons</groupId>
-            <artifactId>abego-commons-base</artifactId>
-            <version>${abego-commons-base.version}</version>
+            <groupId>org.abego.event</groupId>
+            <artifactId>abego-event-swing</artifactId>
+            <version>${abego-event-swing.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.abego.event</groupId>
-            <artifactId>abego-event-core</artifactId>
-            <version>${abego-event-core.version}</version>
+            <groupId>org.abego.guitesting</groupId>
+            <artifactId>abego-guitesting-swing</artifactId>
+            <version>${abego-guitesting-swing.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit-jupiter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit-jupiter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit-jupiter.version}</version>
         </dependency>
     </dependencies>
 

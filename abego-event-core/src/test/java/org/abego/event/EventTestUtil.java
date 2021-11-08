@@ -1,12 +1,13 @@
 package org.abego.event;
 
-import org.abego.guitesting.swing.GT;
-import org.abego.guitesting.swing.GuiTesting;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public final class EventTestUtil {
-    
+
     public static EventWithSource newEventWithSource(String source, String text) {
         return new EventWithSource() {
             @Override
@@ -22,14 +23,13 @@ public final class EventTestUtil {
     }
 
     public static boolean exceptionInObserverCodeDoesNotStopDispatching(
-            Function<EventService,EventDispatcher> dispatchFactory) {
+            Function<EventService, EventDispatcher> dispatchFactory) {
 
         // Exception while dispatching does not stop dispatching
-        GT gt = GuiTesting.newGT();
+        List<String> result = new ArrayList<>();
         EventService eventService = EventServices.newEventService();
         EventDispatcher dispatcher = dispatchFactory.apply(eventService);
-        eventService.addObserver(String.class, dispatcher,
-                s -> gt.blackboard().add(s));
+        eventService.addObserver(String.class, dispatcher, result::add);
         eventService.addObserver(String.class, dispatcher,
                 s -> {
                     if (s.equals("bar"))
@@ -41,7 +41,7 @@ public final class EventTestUtil {
         eventService.postEvent("baz");
 
         // even with exception all events are observed
-        gt.assertEqualsRetrying("foo\nbar\nbaz", () -> gt.blackboard().text());
+        assertEquals("foo\nbar\nbaz", String.join("\n", result));
 
         return true;
     }

@@ -1,10 +1,9 @@
 package org.abego.event.swing;
 
+import org.abego.event.AsyncEventTestUtil;
 import org.abego.event.EventDispatcher;
 import org.abego.event.EventService;
 import org.abego.event.EventServices;
-//TODO: reactivate when core test code moved to separate module
-//import org.abego.event.EventTestUtil;
 import org.abego.guitesting.swing.GT;
 import org.abego.guitesting.swing.GuiTesting;
 import org.junit.jupiter.api.Assertions;
@@ -15,12 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SwingDispatcherTest {
 
-//TODO: reactivate when core test code moved to separate module
-//    @Test
-//    void exceptionInObserverCodeDoesNotStopDispatching() {
-//        Assertions.assertTrue(EventTestUtil.exceptionInObserverCodeDoesNotStopDispatching(
-//                SwingDispatchers::newSwingDispatcher));
-//    }
+    @Test
+    void exceptionInObserverCodeDoesNotStopDispatching() {
+        Assertions.assertTrue(AsyncEventTestUtil.exceptionInObserverCodeDoesNotStopDispatchingWithAsyncSupport(
+                SwingDispatchers::newSwingDispatcher));
+    }
 
     @Test
     void constructor() {
