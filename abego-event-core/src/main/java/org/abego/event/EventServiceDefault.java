@@ -27,6 +27,7 @@ import static org.abego.event.ExplicitDispatcherImpl.newExplicitDispatcherImpl;
 final class EventServiceDefault implements EventService {
     //region Construction
     private static final EventService DEFAULT_INSTANCE = newInstance();
+
     private EventServiceDefault() {
     }
 
@@ -73,11 +74,13 @@ final class EventServiceDefault implements EventService {
     public <T> EventObserver<T> addObserver(EventObserver<T> eventObserver) {
         checkNotClosed();
 
-        if (!allEventObservers.add(eventObserver)) {
-            throw new IllegalArgumentException(
-                    "EventObserver was already added before.");
+        synchronized (allEventObservers) {
+            if (!allEventObservers.add(eventObserver)) {
+                throw new IllegalArgumentException(
+                        "EventObserver was already added before.");
+            }
+            return eventObserver;
         }
-        return eventObserver;
     }
 
     public <T> EventObserver<T> addObserver(
@@ -93,41 +96,53 @@ final class EventServiceDefault implements EventService {
     public void removeObserver(EventObserver<?> observer) {
         checkNotClosed();
 
-        allEventObservers.remove(observer);
+        synchronized (allEventObservers) {
+            allEventObservers.remove(observer);
+        }
     }
 
     @Override
     public void removeAllObservers(Collection<EventObserver<?>> observers) {
         checkNotClosed();
 
-        allEventObservers.removeAll(observers);
+        synchronized (allEventObservers) {
+            allEventObservers.removeAll(observers);
+        }
     }
 
     @Override
     public void removeAllObservers() {
         checkNotClosed();
 
-        allEventObservers.removeAll();
+        synchronized (allEventObservers) {
+            allEventObservers.removeAll();
+        }
     }
 
     @Override
     public void unobserveSource(Object sourceObject) {
         checkNotClosed();
 
-        allEventObservers.removeIf(e-> Objects.equals(e.getSource(), sourceObject));
+        synchronized (allEventObservers) {
+            allEventObservers.removeIf(e -> Objects.equals(e.getSource(), sourceObject));
+        }
     }
 
     @Override
     public void unobserveAllSources(Collection<Object> sourceObjects) {
         checkNotClosed();
 
-        allEventObservers.removeIf(e-> sourceObjects.contains(e.getSource()));
+        synchronized (allEventObservers) {
+            allEventObservers.removeIf(e -> sourceObjects.contains(e.getSource()));
+        }
     }
 
     private Iterable<EventObserver<?>> getObserversForEvent(Object event) {
         checkNotClosed();
 
-        return allEventObservers.filtered(o -> isEventForObserver(event, o));
+        synchronized (allEventObservers) {
+            return allEventObservers.filtered(o -> isEventForObserver(event, o));
+        }
     }
 
     private boolean isEventForObserver(Object event, EventObserver<?> observer) {
@@ -183,7 +198,8 @@ final class EventServiceDefault implements EventService {
 
     //endregion
     //region Closing EventService
-    private boolean closed = false;
+    private volatile boolean closed = false;
+
     @Override
     public boolean isClosed() {
         return closed;
@@ -192,7 +208,9 @@ final class EventServiceDefault implements EventService {
     @Override
     public void close() {
         closed = true;
-        allEventObservers.removeAll();
+        synchronized (allEventObservers) {
+            allEventObservers.removeAll();
+        }
         asyncDispatcherGroup.close();
     }
 
