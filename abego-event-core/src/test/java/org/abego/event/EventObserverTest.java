@@ -4,6 +4,8 @@ import org.abego.commons.var.Var;
 import org.abego.commons.var.VarUtil;
 import org.junit.jupiter.api.Test;
 
+import java.util.function.Consumer;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -27,4 +29,27 @@ class EventObserverTest {
         assertNotNull(config.getDispatcher());
     }
 
+    @Test
+    void sourceAndConditionDefaults() {
+        EventObserver<String> eo = new EventObserver<String>(){
+            @Override
+            public Class<String> getEventType() {
+                return String.class;
+            }
+
+            @Override
+            public EventDispatcher getDispatcher() {
+                return EventServices.getDefault().getDefaultDispatcher();
+            }
+
+            @Override
+            public Consumer<String> getListener() {
+                return s->{};
+            }
+        };
+
+        assertNull(eo.getSource());
+        assertTrue(eo.getCondition().test("foo"));
+        assertTrue(eo.getCondition().test("bar"));
+    }
 }
