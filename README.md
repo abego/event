@@ -10,16 +10,16 @@ __Maven:__
 
 ```
 <dependency>
-    <groupId>org.abego.org.abego.event</groupId>
-    <artifactId>abego-org.abego.event-core</artifactId>
+    <groupId>org.abego.event</groupId>
+    <artifactId>abego-event-core</artifactId>
     <version>0.1.0</version>
 </dependency>
 ```
 
 ```
 <dependency>
-    <groupId>org.abego.org.abego.event </groupId>
-    <artifactId>abego-org.abego.event-swing</artifactId>
+    <groupId>org.abego.event</groupId>
+    <artifactId>abego-event-swing</artifactId>
     <version>0.1.0</version>
 </dependency>
 ```
@@ -30,7 +30,7 @@ You may check out the source code from the [GitHub repository](https://github.co
 
 ## Links
 
-- Sources: https://github.com/abego/org.abego.event
+- Sources: https://github.com/abego/event
 - Twitter: @abego (e.g. for announcements of new releases)
 
 ## License
