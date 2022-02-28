@@ -44,6 +44,12 @@
             <version>${abego-commons-base.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.abego.commons</groupId>
+            <artifactId>abego-commons-test</artifactId>
+            <version>${abego-commons-test.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.abego.event</groupId>
             <artifactId>abego-event-core</artifactId>
             <version>${abego-event-core.version}</version>
