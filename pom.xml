@@ -30,7 +30,7 @@
 
     <groupId>org.abego.event</groupId>
     <artifactId>abego-event</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.2.0</version>
     <packaging>pom</packaging>
 
     <name>abego Event (Parent)</name>

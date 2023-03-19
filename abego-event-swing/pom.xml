@@ -30,7 +30,7 @@
     <parent>
         <groupId>org.abego.event</groupId>
         <artifactId>abego-event</artifactId>
-        <version>0.1.1-SNAPSHOT</version>
+        <version>0.2.0</version>
     </parent>
 
     <artifactId>abego-event-swing</artifactId>

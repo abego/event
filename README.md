@@ -4,7 +4,7 @@ abego Event - Event Handling for Java
 
 ## Download
 
-__Download:__ https://github.com/abego/event/releases/tag/v0.1.0
+__Download:__ https://github.com/abego/event/releases/tag/v0.2.0
 
 __Maven:__
 
@@ -12,7 +12,7 @@ __Maven:__
 <dependency>
     <groupId>org.abego.event</groupId>
     <artifactId>abego-event-core</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
@@ -20,7 +20,7 @@ __Maven:__
 <dependency>
     <groupId>org.abego.event</groupId>
     <artifactId>abego-event-swing</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
